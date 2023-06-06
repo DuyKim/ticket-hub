@@ -24,7 +24,7 @@ deploy:
 # More info: https://www.okteto.com/docs/reference/manifest/#dev
 dev:
   auth:
-    image: duykim/auth
+    image: registry.cloud.okteto.net/duykim/auth
     command: bash
     workdir: /usr/src/app
     sync:

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: duykim/auth
+          image: registry.cloud.okteto.net/duykim/auth
 ---
 apiVersion: v1
 kind: Service
