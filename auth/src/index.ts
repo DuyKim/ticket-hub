@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(3000, () => {
-  const networkInterfaces = os.networkInterfaces();
-  console.log(networkInterfaces);
+  // const networkInterfaces = os.networkInterfaces();
+  // console.log(networkInterfaces);
   console.log('Listening on port 3000');
 });
