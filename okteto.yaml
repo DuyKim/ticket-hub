@@ -24,8 +24,8 @@ dev:
   auth:
     image: registry.cloud.okteto.net/duykim/ticket-hub-auth:okteto
     command: npm start
-    workdir: /app
+    workdir: /usr/src/app
     sync:
-      - auth:/app
+      - auth:/usr/src/app
     forward:
       - 3000:3000
