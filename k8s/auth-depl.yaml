@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: registry.cloud.okteto.net/duykim/auth
+          image: registry.cloud.okteto.net/duykim/ticketing-auth
 ---
 apiVersion: v1
 kind: Service

@@ -21,7 +21,7 @@ deploy:
 # More info: https://www.okteto.com/docs/reference/manifest/#dev
 dev:
   auth:
-    image: registry.cloud.okteto.net/duykim/auth
+    image: registry.cloud.okteto.net/duykim/ticketing-auth
     command: bash
     workdir: /usr/src/app
     sync:
