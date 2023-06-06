@@ -22,7 +22,7 @@ deploy:
 dev:
   auth:
     image: registry.cloud.okteto.net/duykim/ticket-hub-auth:okteto
-    command: npm start
+    command: bash
     workdir: /usr/src/app
     sync:
       - auth:/usr/src/app
