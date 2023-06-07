@@ -10,11 +10,11 @@ spec:
   ingressClassName: nginx
   rules:
     - http:
-      paths:
-        - path: /api/users/?(.*)
-          pathType: Prefix
-          backend:
-            service:
-              name: auth-srv
-              port:
-                number: 3000
+        paths:
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-srv
+                port:
+                  number: 3000
