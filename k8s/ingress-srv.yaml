@@ -4,16 +4,17 @@ metadata:
   name: ingress-service
   annotations:
     nginx.ingress.kubernetes.io/use-regex: 'true'
+    dev.okteto.com/generate-host: 'true'
+    dev.okteto.com/endpoints: https://ticketing-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}
 spec:
   ingressClassName: nginx
   rules:
-    - host: ticketing.duykim.cloud.okteto.net
-      http:
-        paths:
-          - path: /api/users/?(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: auth-srv
-                port:
-                  number: 3000
+    - http:
+      paths:
+        - path: /api/users/?(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: auth-srv
+              port:
+                number: 3000

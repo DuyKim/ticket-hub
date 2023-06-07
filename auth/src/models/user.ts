@@ -1,4 +1,5 @@
 import mongoose, { Document, Model } from 'mongoose';
+import { Password } from '../services/password';
 
 const USER_DOCUMENT = 'User';
 const USERS_COLLECTION = 'Users';
@@ -32,6 +33,15 @@ const userSchema = new mongoose.Schema<UserDoc, UserModel>(
     collection: USERS_COLLECTION,
   }
 );
+
+userSchema.pre('save', async function (done) {
+  if (this.isModified('password')) {
+    const hashed = await Password.toHash(this.get('password'));
+    this.set('password', hashed);
+  }
+
+  done();
+});
 
 userSchema.statics.build = (user: UserAttrs) => {
   return new User(user);
