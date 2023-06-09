@@ -1,7 +1,9 @@
 'use client';
-import useRequest from '@/hooks/use-request';
 import axios from 'axios';
 import { useState } from 'react';
+import Router from 'next/router';
+
+import useRequest from '@/hooks/use-request';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -13,12 +15,12 @@ export default function Signup() {
       email,
       password,
     },
+    onSuccess: () => Router.push('/'),
   });
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    console.log('asjd');
-    doRequest();
+    await doRequest();
   };
 
   return (
