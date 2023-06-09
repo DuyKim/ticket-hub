@@ -17,6 +17,7 @@ export default function Signup() {
 
   const onSubmit = async (event) => {
     event.preventDefault();
+    console.log('asjd');
     doRequest();
   };
 
@@ -24,7 +25,7 @@ export default function Signup() {
     <form onSubmit={onSubmit}>
       <h1>Sign up</h1>
       <div className="mb-3">
-        <label for="email">Email address</label>
+        <label htmlFor="email">Email address</label>
         <input
           className="form-control"
           type="email"
@@ -34,7 +35,7 @@ export default function Signup() {
         />
       </div>
       <div className="mb-3">
-        <label for="password">Password</label>
+        <label htmlFor="password">Password</label>
         <input
           className="form-control"
           type="password"

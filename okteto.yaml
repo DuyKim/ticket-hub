@@ -31,7 +31,7 @@ dev:
     sync:
       - auth:/usr/src/app
     forward:
-      - 3000:3000
+      - 3001:3000
   client:
     image: okteto.dev/ticketing-client
     command: sh
