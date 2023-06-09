@@ -8,8 +8,10 @@ build:
   #  - OKTETO_BUILD_AUTH_SHA: image tag sha256
   auth:
     context: auth
+    dockerfile: Dockerfile
   client:
     context: client
+    dockerfile: Dockerfile
 
 # The deploy section defines how to deploy your development environment
 # More info: https://www.okteto.com/docs/reference/manifest/#deploy
@@ -24,7 +26,7 @@ deploy:
 dev:
   auth:
     image: registry.cloud.okteto.net/duykim/ticketing-auth
-    command: sh
+    command: npm start
     workdir: /usr/src/app
     sync:
       - auth:/usr/src/app
@@ -32,9 +34,9 @@ dev:
       - 3000:3000
   client:
     image: okteto.dev/ticketing-client
-    command: npm run dev
-    workdir: /app
+    command: sh
+    workdir: /home/node/app
     sync:
-      - client:/app
+      - client:/home/node/app
     forward:
       - 3000:3000
