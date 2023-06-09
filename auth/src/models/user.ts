@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema<UserDoc, UserModel>(
   },
   {
     collection: USERS_COLLECTION,
+    toJSON: {
+      transform(doc, ret, options) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.password;
+      },
+      versionKey: false,
+    },
   }
 );
 

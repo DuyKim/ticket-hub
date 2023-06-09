@@ -1,56 +1,27 @@
-// import os from 'os';
+import http from 'node:http';
 
-import express from 'express';
-import 'express-async-errors';
 import mongoose from 'mongoose';
-import { json } from 'body-parser';
-import cookieSession from 'cookie-session';
 
-// Routers
-import { signupRouter } from './routes/signup';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { currentUserRouter } from './routes/current-user';
-
-// Error handlers
-import { NotFoundError } from './errors/not-found-error';
-import { errorHandler } from './middlewares/error-handler';
-
-const app = express();
-app.set('trust proxy', true);
-app.use(json());
-app.use(
-  cookieSession({
-    signed: false,
-    secure: true,
-  })
-);
-
-// Routers
-app.use(signinRouter);
-app.use(signupRouter);
-app.use(signoutRouter);
-app.use(currentUserRouter);
-
-// Error handlers
-app.all('*', async (req, res) => {
-  throw new NotFoundError();
-});
-
-app.use(errorHandler);
+import { app } from './app';
 
 const start = async () => {
+  if (!process.env.JWT_KEY) {
+    throw new Error('JWT_KEY is required');
+  }
+
   try {
     await mongoose.connect('mongodb://auth-mongo-srv:27017/auth');
   } catch (error) {
     console.error(error);
   }
 
-  app.listen(3000, () => {
+  const server = http.createServer(app);
+
+  server.listen(3000, () => {
     // const networkInterfaces = os.networkInterfaces();
     // console.log(networkInterfaces);
 
-    console.log('Listening on port 3000');
+    console.log('Listening on port 3000!!!');
   });
 };
 
