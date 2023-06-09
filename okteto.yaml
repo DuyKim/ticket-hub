@@ -26,7 +26,7 @@ deploy:
 dev:
   auth:
     image: registry.cloud.okteto.net/duykim/ticketing-auth
-    command: npm start
+    command: sh
     workdir: /usr/src/app
     sync:
       - auth:/usr/src/app
@@ -35,8 +35,8 @@ dev:
   client:
     image: okteto.dev/ticketing-client
     command: sh
-    workdir: /home/node/app
+    workdir: /usr/src/app
     sync:
-      - client:/home/node/app
+      - client:/usr/src/app
     forward:
       - 3000:3000
