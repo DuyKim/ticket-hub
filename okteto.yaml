@@ -1,5 +1,3 @@
-# The build section defines how to build the images of your development environment
-# More info: https://www.okteto.com/docs/reference/manifest/#build
 build:
   # You can use the following env vars to refer to this image in your deploy commands:
   #  - OKTETO_BUILD_AUTH_REGISTRY: image registry
@@ -12,18 +10,13 @@ build:
   client:
     context: client
     dockerfile: Dockerfile
+  tickets:
+    context: tickets
+    dockerfile: Dockerfile
 
-# The deploy section defines how to deploy your development environment
-# More info: https://www.okteto.com/docs/reference/manifest/#deploy
 deploy:
   - kubectl apply -f k8s
 
-# The dependencies section defines other git repositories to be deployed as part of your development environment
-# More info: https://www.okteto.com/docs/reference/manifest/#dependencies
-# dependencies:
-#   - https://github.com/okteto/sample
-# The dev section defines how to activate a development container
-# More info: https://www.okteto.com/docs/reference/manifest/#dev
 dev:
   auth:
     image: registry.cloud.okteto.net/duykim/ticketing-auth
@@ -41,3 +34,11 @@ dev:
       - client:/usr/src/app
     forward:
       - 3000:3000
+  tickets:
+    image: okteto.dev/ticketing-tickets
+    command: sh
+    workdir: /usr/src/app
+    sync:
+      - client:/usr/src/app
+    forward:
+      - 3002:3002

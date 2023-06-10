@@ -1,16 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import '@/styles/globals.css';
+import App from 'next/app';
 
 import { useEffect } from 'react';
+import buildClient from '@/api/build-client';
+import Header from '../components/header';
 
-export default function App({ Component, pageProps }) {
-  useEffect(() => {
-    require('bootstrap/dist/js/bootstrap');
-  }, []);
+export default function CustomApp({ Component, pageProps, currentUser }) {
+  // useEffect(() => {
+  //   require('bootstrap/dist/js/bootstrap');
+  // }, []);
 
   return (
     <div>
-      <header>Header</header>
+      <Header currentUser={currentUser} />
       <main>
         <Component {...pageProps} />
       </main>
@@ -18,3 +20,14 @@ export default function App({ Component, pageProps }) {
     </div>
   );
 }
+
+CustomApp.getInitialProps = async (appContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  const client = buildClient(appContext.ctx);
+  const { data } = await client.get('/api/users/currentuser');
+
+  return {
+    ...appProps,
+    currentUser: data.currentUser ? data.currentUser : null,
+  };
+};

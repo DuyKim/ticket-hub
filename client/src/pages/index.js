@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const getServerSideProps = async (context) => {
   const { data } = await client(context).get('/api/users/currentuser');
 
-  return { props: { currentUser: data.currentUser } };
+  return { props: { currentUser: data.currentUser ? data.currentUser : null } };
 };
 
 export default function Home({ currentUser }) {
@@ -20,7 +20,7 @@ export default function Home({ currentUser }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${styles.main} ${inter.className}`}>
+      <main className={`${inter.className}`}>
         {currentUser ? (
           <h1>You are signed in</h1>
         ) : (

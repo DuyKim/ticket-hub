@@ -9,6 +9,7 @@ export default function useRequest({ url, method, body, onSuccess }) {
       setErrors([]);
       const response = await axios[method](url, body);
       if (onSuccess) {
+        console.log('success', response);
         onSuccess(response.data);
       }
     } catch (error) {

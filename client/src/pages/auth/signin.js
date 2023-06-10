@@ -1,11 +1,10 @@
-'use client';
 import axios from 'axios';
 import { useState } from 'react';
 import Router from 'next/router';
 
 import useRequest from '@/hooks/use-request';
 
-export default function Signup() {
+export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorComponent, doRequest] = useRequest({

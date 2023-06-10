@@ -5,12 +5,6 @@ import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 
-// Routers
-import { signupRouter } from './routes/signup';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { currentUserRouter } from './routes/current-user';
-
 // Error handlers
 import { NotFoundError, errorHandler } from '@asdfkai/common';
 
@@ -25,10 +19,6 @@ app.use(
 );
 
 // Routers
-app.use(signinRouter);
-app.use(signupRouter);
-app.use(signoutRouter);
-app.use(currentUserRouter);
 
 // Error handlers
 app.all('*', async (req, res) => {
