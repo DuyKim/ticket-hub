@@ -9,8 +9,12 @@ const start = async () => {
     throw new Error('JWT_KEY is required');
   }
 
+  if (!process.env.MONGO_URI) {
+    throw new Error('MONGO_URI is required');
+  }
+
   try {
-    await mongoose.connect('mongodb://tickets-mongo-srv:27017/tickets');
+    await mongoose.connect(process.env.MONGO_URI);
   } catch (error) {
     console.error(error);
   }
