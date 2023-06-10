@@ -17,6 +17,7 @@ build:
 # More info: https://www.okteto.com/docs/reference/manifest/#deploy
 deploy:
   - kubectl apply -f k8s
+
 # The dependencies section defines other git repositories to be deployed as part of your development environment
 # More info: https://www.okteto.com/docs/reference/manifest/#dependencies
 # dependencies:

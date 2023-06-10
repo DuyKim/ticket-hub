@@ -8,5 +8,13 @@ export default function App({ Component, pageProps }) {
     require('bootstrap/dist/js/bootstrap');
   }, []);
 
-  return <Component {...pageProps} />;
+  return (
+    <div>
+      <header>Header</header>
+      <main>
+        <Component {...pageProps} />
+      </main>
+      <footer />
+    </div>
+  );
 }

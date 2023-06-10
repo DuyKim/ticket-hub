@@ -1,18 +1,14 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { Inter } from 'next/font/google';
-import styles from '@/styles/Home.module.css';
-import axios from 'axios';
+import client from '@/api/build-client';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const getServerSideProps = async () => {
-  const response = await fetch(
-    'https://ticketing-duykim.cloud.okteto.net/api/users/currentuser'
-  ).then((res) => res.json());
+export const getServerSideProps = async (context) => {
+  const { data } = await client(context).get('/api/users/currentuser');
 
-  console.log(response);
-  return { props: { currentUser: 'sjd' } };
+  return { props: { currentUser: data.currentUser } };
 };
 
 export default function Home({ currentUser }) {
@@ -24,7 +20,13 @@ export default function Home({ currentUser }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${styles.main} ${inter.className}`}>{currentUser}</main>
+      <main className={`${styles.main} ${inter.className}`}>
+        {currentUser ? (
+          <h1>You are signed in</h1>
+        ) : (
+          <h1>You are not signed in</h1>
+        )}
+      </main>
     </>
   );
 }

@@ -12,6 +12,7 @@ export default function useRequest({ url, method, body, onSuccess }) {
         onSuccess(response.data);
       }
     } catch (error) {
+      console.log(error);
       setErrors(error.response.data);
     }
   };
