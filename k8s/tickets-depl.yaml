@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ticket
+  name: tickets
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ticket
+      app: tickets
   template:
     metadata:
       labels:
-        app: ticket
+        app: tickets
     spec:
       containers:
-        - name: ticket
+        - name: tickets
           image: okteto.dev/ticketing-tickets
           env:
             - name: MONGO_URI
