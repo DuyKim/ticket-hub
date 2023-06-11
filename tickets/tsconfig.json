@@ -5,6 +5,8 @@
     "module": "commonjs",
     "paths": {
       "@models/*": ["./src/models/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@routers/*": ["./src/routers/*"],
       "@services/*": ["./src/services/*"],
       "@root/*": ["./src/*"]
     },

@@ -1,8 +1,10 @@
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
-import request from 'supertest';
+import { randomBytes } from 'node:crypto';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../app';
+import { getId } from '@utils/getId';
 
 let mongo: any;
 beforeAll(async () => {
@@ -11,7 +13,11 @@ beforeAll(async () => {
 
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
-  await mongoose.connect(mongoUri, {});
+  try {
+    await mongoose.connect(mongoUri, {});
+  } catch (error) {
+    console.log('Error connecting to mongoose', error);
+  }
 });
 
 beforeEach(async () => {
@@ -28,16 +34,19 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-global.signin = async () => {
-  const email = 'test@example.com';
-  const password = 'testpassword';
+global.signin = () => {
+  const payload = {
+    id: getId(),
+    email: 'test@example.com',
+  };
 
-  const response = await request(app)
-    .post('/api/users/signup')
-    .send({ email, password })
-    .expect(201);
+  const token = jwt.sign(payload, process.env.JWT_KEY!);
 
-  const cookie = response.get('Set-Cookie');
+  const session = { jwt: token };
 
-  return cookie;
+  const sessionJSON = JSON.stringify(session);
+
+  const base64 = Buffer.from(sessionJSON).toString('base64');
+
+  return [`session=${base64}`];
 };

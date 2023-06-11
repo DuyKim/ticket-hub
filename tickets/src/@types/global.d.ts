@@ -1,7 +1,7 @@
 export {};
 
 declare global {
-  var signin: () => Promise<string[]>;
+  var signin: () => string[];
 
   namespace Express {
     interface Request {
