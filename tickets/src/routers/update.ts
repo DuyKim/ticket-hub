@@ -1,4 +1,5 @@
 import {
+  BadRequestError,
   NotAuthorizedError,
   NotFoundError,
   requireAuth,
@@ -8,6 +9,8 @@ import { body } from 'express-validator';
 import express, { Request, Response } from 'express';
 
 import { Ticket } from '@models/ticket';
+import { TicketUpdatedPublisher } from '@root/events/publishers/ticket-updated-publisher';
+import { natsWrapper } from '@root/nats-wrapper';
 
 const router = express.Router();
 
@@ -28,9 +31,11 @@ router.put(
       throw new NotFoundError();
     }
 
-    console.log(ticket);
+    if (ticket.orderId) {
+      throw new BadRequestError('Cannot edit a reserved ticket');
+    }
 
-    if (ticket.userId.toHexString() !== req.currentUser.id) {
+    if (ticket.userId !== req.currentUser.id) {
       throw new NotAuthorizedError();
     }
 
@@ -40,6 +45,17 @@ router.put(
     });
 
     await ticket.save();
+
+    // needs to handle the odd of database transaction when save ticket and event concurrently
+    // not implement this feature in this application but you have to realize that corner cases to implement later on.
+
+    await new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId,
+      version: ticket.version,
+    });
 
     res.send(ticket);
   }

@@ -1,22 +1,25 @@
 import mongoose, { model, Document, Model, Schema, Types } from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 type TicketAttrs = {
   title: string;
   price: number;
-  userId: Types.ObjectId;
+  userId: string;
 };
 
 interface TicketDoc extends Document {
   title: string;
   price: number;
-  userId: Types.ObjectId;
+  userId: string;
+  version: number;
+  orderId?: string;
 }
 
 interface TicketModel extends Model<TicketDoc> {
   build(ticketAttrs: TicketAttrs): TicketDoc;
 }
 
-const ticketSchema = new mongoose.Schema<TicketDoc, TicketModel>(
+const ticketSchema = new mongoose.Schema<TicketDoc>(
   {
     title: {
       type: String,
@@ -27,8 +30,11 @@ const ticketSchema = new mongoose.Schema<TicketDoc, TicketModel>(
       required: true,
     },
     userId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
+    },
+    orderId: {
+      type: String,
     },
   },
   {
@@ -39,12 +45,17 @@ const ticketSchema = new mongoose.Schema<TicketDoc, TicketModel>(
       },
       versionKey: false,
     },
+    statics: {
+      build(ticketAttrs: TicketAttrs): TicketDoc {
+        return new Ticket(ticketAttrs);
+      },
+    },
+    optimisticConcurrency: true,
   }
 );
 
-ticketSchema.statics.build = (ticketAttrs: TicketAttrs) => {
-  return new Ticket(ticketAttrs);
-};
+ticketSchema.set('versionKey', 'version');
+// ticketSchema.plugin(updateIfCurrentPlugin);
 
 const Ticket = model<TicketDoc, TicketModel>('Ticket', ticketSchema);
 

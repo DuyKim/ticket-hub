@@ -1,7 +1,10 @@
 import { requireAuth, validateRequest } from '@asdfkai/common';
 import { Ticket } from '@models/ticket';
-import express, { Request, Response } from 'express';
+import { TicketCreatedPublisher } from '@root/events/publishers/ticket-created-publisher';
 import { body } from 'express-validator';
+import express, { Request, Response } from 'express';
+
+import { natsWrapper } from '@root/nats-wrapper';
 
 const router = express.Router();
 
@@ -24,9 +27,15 @@ router.post(
       userId: req.currentUser.id,
     });
 
-    console.log('new', ticket);
-
     await ticket.save();
+    await new TicketCreatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId,
+      version: ticket.version,
+    });
+
     res.status(201).send(ticket);
   }
 );

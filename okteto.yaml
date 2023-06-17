@@ -1,31 +1,27 @@
 build:
-  # You can use the following env vars to refer to this image in your deploy commands:
-  #  - OKTETO_BUILD_AUTH_REGISTRY: image registry
-  #  - OKTETO_BUILD_AUTH_REPOSITORY: image repo
-  #  - OKTETO_BUILD_AUTH_IMAGE: image name
-  #  - OKTETO_BUILD_AUTH_SHA: image tag sha256
-  auth:
-    context: auth
-    dockerfile: Dockerfile
   client:
     context: client
     dockerfile: Dockerfile
+  auth:
+    context: auth
+    dockerfile: Dockerfile
   tickets:
     context: tickets
+    dockerfile: Dockerfile
+  orders:
+    context: orders
+    dockerfile: Dockerfile
+  expiration:
+    context: expiration
+    dockerfile: Dockerfile
+  payments:
+    context: payments
     dockerfile: Dockerfile
 
 deploy:
   - kubectl apply -f k8s
 
 dev:
-  auth:
-    image: registry.cloud.okteto.net/duykim/ticketing-auth
-    command: sh
-    workdir: /usr/src/app
-    sync:
-      - auth:/usr/src/app
-    forward:
-      - 3001:3001
   client:
     image: okteto.dev/ticketing-client
     command: sh
@@ -34,11 +30,41 @@ dev:
       - client:/usr/src/app
     forward:
       - 3000:3000
+  auth:
+    image: okteto.dev/ticketing-auth
+    command: sh
+    workdir: /usr/src/app
+    sync:
+      - auth:/usr/src/app
+    forward:
+      - 3001:3001
   tickets:
     image: okteto.dev/ticketing-tickets
     command: sh
     workdir: /usr/src/app
     sync:
-      - client:/usr/src/app
+      - tickets:/usr/src/app
     forward:
       - 3002:3002
+  orders:
+    image: okteto.dev/ticketing-orders
+    command: sh
+    workdir: /usr/src/app
+    sync:
+      - orders:/usr/src/app
+    forward:
+      - 3003:3003
+  expiration:
+    image: okteto.dev/ticketing-orders
+    command: sh
+    workdir: /usr/src/app
+    sync:
+      - expiration:/usr/src/app
+  payments:
+    image: okteto.dev/ticketing-payments
+    command: sh
+    workdir: /usr/src/app
+    sync:
+      - payments:/usr/src/app
+    forward:
+      - 3004:3004

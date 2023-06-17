@@ -11,22 +11,14 @@ test('should response with details about the current user', async () => {
     .send()
     .expect(200);
 
-  expect(response.body).toMatchInlineSnapshot(`
-{
-  "currentUser": {
-    "email": "test@example.com",
-    "iat": 1686253813,
-    "id": "648230f5b278fb74635aa325",
-  },
-}
-`);
+  expect(response.body.currentUser.email).toEqual('test@example.com');
 });
 
 test('should response with an error if not authenticated', async () => {
   const response = await request(app)
     .get('/api/users/currentuser')
     .send()
-    .expect(400);
+    .expect(401);
 
   expect(response.body).toMatchInlineSnapshot(`
     [

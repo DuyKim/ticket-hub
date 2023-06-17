@@ -1,10 +1,10 @@
 import express from 'express';
 
-import { currentUser } from '@asdfkai/common';
+import { currentUser, requireAuth } from '@asdfkai/common';
 
 const router = express.Router();
 
-router.get('/api/users/currentuser', currentUser, (req, res) => {
+router.get('/api/users/currentuser', currentUser, requireAuth, (req, res) => {
   res.send({
     currentUser: req.currentUser,
   });

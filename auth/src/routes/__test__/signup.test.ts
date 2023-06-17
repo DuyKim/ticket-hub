@@ -94,6 +94,7 @@ test('should set a cookie after successful signup', async () => {
       password: 'testpassword',
     })
     .expect(201);
+  console.log(response.get('Set-Cookie'));
 
   expect(response.get('Set-Cookie')).toBeDefined();
 });

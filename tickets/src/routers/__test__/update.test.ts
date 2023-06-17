@@ -2,6 +2,8 @@ import request from 'supertest';
 
 import { app } from '@root/app';
 import { getId } from '@utils/getId';
+import { Ticket } from '@models/ticket';
+import { natsWrapper } from '@root/nats-wrapper';
 
 const getPayload = () => ({
   title: 'a valid title',
@@ -90,4 +92,43 @@ test('should update the ticket provided valid inputs successfully', async () => 
 
   expect(ticketResponse.body.title).toEqual(editedPayload.title);
   expect(ticketResponse.body.price).toEqual(editedPayload.price);
+});
+
+test('should publish an update event', async () => {
+  const cookie = global.signin();
+  const editedPayload = getPayload();
+
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send(getPayload());
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send(editedPayload)
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+test('rejects invalid updates if the ticket is reserved', async () => {
+  const cookie = global.signin();
+  const editedPayload = getPayload();
+
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send(getPayload());
+
+  const ticket = await Ticket.findById(response.body.id);
+
+  ticket!.set({ orderId: getId() });
+  await ticket!.save();
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send(editedPayload)
+    .expect(400);
 });

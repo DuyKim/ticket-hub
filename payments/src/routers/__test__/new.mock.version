@@ -1,0 +1,70 @@
+import request from 'supertest';
+import { app } from '@root/app';
+import { getId } from '@utils/getId';
+import { buildOrderHelper } from '@root/tests/helper/buildOrderHelper';
+import { OrderStatus } from '@asdfkai/common';
+import { stripe } from '@root/stripe';
+
+jest.mock('@root/stripe');
+
+test('should return a 404 when purchasing an order that does not exist', async () => {
+  await request(app)
+    .post('/api/payments')
+    .set('Cookie', global.signin())
+    .send({
+      token: 'asdf',
+      orderId: getId(),
+    })
+    .expect(404);
+});
+
+test('should return a 401 when purchasing an order that doesnt belong to the user', async () => {
+  const order = await buildOrderHelper();
+
+  await request(app)
+    .post('/api/payments')
+    .set('Cookie', global.signin())
+    .send({
+      token: 'asdf',
+      orderId: order.id,
+    })
+    .expect(401);
+});
+
+test('should return a 400 when purchasing a cancelled order', async () => {
+  const userId = getId();
+  const cookie = global.signin(userId);
+  const order = await buildOrderHelper(userId);
+  order.set({ status: OrderStatus.Cancelled });
+  await order.save();
+
+  await request(app)
+    .post('/api/payments')
+    .set('Cookie', cookie)
+    .send({
+      token: 'asdf',
+      orderId: order.id,
+    })
+    .expect(400);
+});
+
+test('should return a 204 with valid inputs', async () => {
+  const userId = getId();
+  const cookie = global.signin(userId);
+  const order = await buildOrderHelper(userId);
+
+  await request(app)
+    .post('/api/payments')
+    .set('Cookie', cookie)
+    .send({
+      token: 'tok_visa',
+      orderId: order.id,
+    })
+    .expect(201);
+
+  const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][1];
+
+  expect(chargeOptions.source).toEqual('tok_visa');
+  expect(chargeOptions.amount).toEqual(20 * 100);
+  expect(chargeOptions.currency).toEqual('usd');
+});
