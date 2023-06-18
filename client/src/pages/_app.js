@@ -6,15 +6,11 @@ import buildClient from '@/api/build-client';
 import Header from '../components/header';
 
 export default function CustomApp({ Component, pageProps, currentUser }) {
-  // useEffect(() => {
-  //   require('bootstrap/dist/js/bootstrap');
-  // }, []);
-
   return (
     <div>
       <Header currentUser={currentUser} />
-      <main>
-        <Component {...pageProps} />
+      <main className="container">
+        <Component {...pageProps} currentUser={currentUser} />
       </main>
       <footer />
     </div>
@@ -23,6 +19,7 @@ export default function CustomApp({ Component, pageProps, currentUser }) {
 
 CustomApp.getInitialProps = async (appContext) => {
   const appProps = await App.getInitialProps(appContext);
+
   const client = buildClient(appContext.ctx);
   const { data } = await client.get('/api/users/currentuser');
 

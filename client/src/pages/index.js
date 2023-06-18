@@ -1,17 +1,31 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { Inter } from 'next/font/google';
-import client from '@/api/build-client';
+import buildClient from '@/api/build-client';
+import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const getServerSideProps = async (context) => {
-  const { data } = await client(context).get('/api/users/currentuser');
+  const client = buildClient(context);
+  const { data } = await client.get('/api/tickets');
 
-  return { props: { currentUser: data.currentUser ? data.currentUser : null } };
+  return { props: { tickets: data } };
 };
 
-export default function Home({ currentUser }) {
+export default function Home({ currentUser, tickets }) {
+  const ticketsList = tickets.map((ticket) => {
+    return (
+      <tr key={ticket.id}>
+        <td>{ticket.title}</td>
+        <td>{ticket.price}</td>
+        <td>
+          <Link href={`/tickets/${ticket.id}`}>View</Link>
+        </td>
+      </tr>
+    );
+  });
+
   return (
     <>
       <Head>
@@ -20,13 +34,18 @@ export default function Home({ currentUser }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${inter.className}`}>
-        {currentUser ? (
-          <h1>You are signed in</h1>
-        ) : (
-          <h1>You are not signed in</h1>
-        )}
-      </main>
+      <div className={`${inter.className}`}>
+        <h1>Tickets</h1>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <body>{ticketsList}</body>
+        </table>
+      </div>
     </>
   );
 }
